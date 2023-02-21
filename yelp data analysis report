@@ -1,0 +1,548 @@
+Data Scientist Role Play: Profiling and Analyzing the Yelp Dataset Coursera Worksheet
+
+This is a 2-part assignment. In the first part, you are asked a series of questions that will help you profile and understand the data just like a data scientist would. For this first part of the assignment, you will be assessed both on the correctness of your findings, as well as the code you used to arrive at your answer. You will be graded on how easy your code is to read, so remember to use proper formatting and comments where necessary.
+
+In the second part of the assignment, you are asked to come up with your own inferences and analysis of the data for a particular research question you want to answer. You will be required to prepare the dataset for the analysis you choose to do. As with the first part, you will be graded, in part, on how easy your code is to read, so use proper formatting and comments to illustrate and communicate your intent as required.
+
+For both parts of this assignment, use this "worksheet." It provides all the questions you are being asked, and your job will be to transfer your answers and SQL coding where indicated into this worksheet so that your peers can review your work. You should be able to use any Text Editor (Windows Notepad, Apple TextEdit, Notepad ++, Sublime Text, etc.) to copy and paste your answers. If you are going to use Word or some other page layout application, just be careful to make sure your answers and code are lined appropriately.
+In this case, you may want to save as a PDF to ensure your formatting remains intact for you reviewer.
+
+
+
+Part 1: Yelp Dataset Profiling and Understanding
+
+1. Profile the data by finding the total number of records for each of the tables below:
+	
+i. Attribute table = 10000
+ii. Business table = 10000
+iii. Category table = 10000
+iv. Checkin table = 10000
+v. elite_years table =10000
+vi. friend table = 10000
+vii. hours table = 10000
+viii. photo table = 10000
+ix. review table = 10000
+x. tip table = 10000
+xi. user table = 10000
+	
+
+
+2. Find the total distinct records by either the foreign key or primary key for each table. If two foreign keys are listed in the table, please specify which foreign key.
+
+i. Business = 10000 (id-pk)
+ii. Hours = 1562 (business_id-fk)
+iii. Category = 2643 (business_id-fk)
+iv. Attribute = 1115 (business_id-fk)
+v. Review = 10000(id-pk)
+vi. Checkin = 493 (business_id-fk)
+vii. Photo = 10000(id-pk)
+viii. Tip = 3979(business_id-fk)
+ix. User = 10000(id-pk)
+x. Friend = 11(user_id-fk)
+xi. Elite_years = 2780 (user_id-fk)
+
+Note: Primary Keys are denoted in the ER-Diagram with a yellow key icon.	
+
+
+
+3. Are there any columns with null values in the Users table? Indicate "yes," or "no."
+
+	Answer:NO
+	
+	
+	SQL code used to arrive at answer:
+	select *
+    from user 
+    where name is  null;
+	
+	
+
+	
+4. For each table and column listed below, display the smallest (minimum), largest (maximum), and average (mean) value for the following fields:
+
+	i. Table: Review, Column: Stars
+	
+		min: 1		max: 5		avg: 3.7082
+		           
+	
+	ii. Table: Business, Column: Stars
+	
+		min: 1		max: 5		avg: 3.6549
+		
+	
+	iii. Table: Tip, Column: Likes
+	
+		min: 0		max: 2		avg: 0.0144
+		
+	
+	iv. Table: Checkin, Column: Count
+	
+		min: 1		max: 53		avg: 1.9414
+		
+	
+	v. Table: User, Column: Review_count
+	
+		min: 0		max: 2000		avg: 24.2995
+		
+
+
+5. List the cities with the most reviews in descending order:
+
+	SQL code used to arrive at answer:
+	 select city ,sum(review_count) as citymax
+     from business
+     group by city 
+     order by citymax desc;
+	
++-----------------+---------+
+| city            | citymax |
++-----------------+---------+
+| Las Vegas       |   82854 |
+| Phoenix         |   34503 |
+| Toronto         |   24113 |
+| Scottsdale      |   20614 |
+| Charlotte       |   12523 |
+| Henderson       |   10871 |
+| Tempe           |   10504 |
+| Pittsburgh      |    9798 |
+| MontrÃ©al        |    9448 |
+| Chandler        |    8112 |
+| Mesa            |    6875 |
+| Gilbert         |    6380 |
+| Cleveland       |    5593 |
+| Madison         |    5265 |
+| Glendale        |    4406 |
+| Mississauga     |    3814 |
+| Edinburgh       |    2792 |
+| Peoria          |    2624 |
+| North Las Vegas |    2438 |
+| Markham         |    2352 |
+| Champaign       |    2029 |
+| Stuttgart       |    1849 |
+| Surprise        |    1520 |
+| Lakewood        |    1465 |
+| Goodyear        |    1155 |
++-----------------+---------+
+	
+
+	
+6. Find the distribution of star ratings to the business in the following cities:
+
+i. Avon = 10
+
+SQL code used to arrive at answer:
+ select city ,sum(stars) as distrib
+ from business
+ group by city 
+ having city='Avon';
+
+
+Copy and Paste the Resulting Table Below (2 columns Ã¢â‚¬â€œ star rating and count):
++------+---------+-------+
+| city | distrib | stars |
++------+---------+-------+
+| Avon |      10 |   4.0 |
++------+---------+-------+
+
+
+ii. Beachwood = 14
+
+SQL code used to arrive at answer:
+select city ,count(stars) as distrib,stars
+from business
+group by city 
+having city='Beachwood' ;
+
+Copy and Paste the Resulting Table Below (2 columns Ã¢â‚¬â€œ star rating and count):
+
+| city      | distrib | stars |
++-----------+---------+-------+
+| Beachwood |      14 |   5.0 |
++-----------+---------+-------+
+
+
+7. Find the top 3 users based on their total number of reviews:
+		
+	SQL code used to arrive at answer:
+	select  name ,review_count
+    from  user
+    order by review_count desc
+    limit 3;
+		
+	Copy and Paste the Result Below:
+
+| name   | review_count |
++--------+--------------+
+| Gerald |         2000 |
+| Sara   |         1629 |
+| Yuri   |         1339 |
++--------+--------------+	
+
+
+8. Does posing more	 reviews correlate with more fans?
+
+	Please explain your findings and interpretation of the results:
+	No, not really for instance yuri have given 1339 reviews and got very low fans when compared with mimi who had given 968 reviews with fan following of 497.
+	so , number of fans is not directly correlated with posing of more reviews.
++-----------+------------------------+--------------+------+
+| name      | id                     | review_count | fans |
++-----------+------------------------+--------------+------+
+| Gerald    | -G7Zkl1wIWBBmD0KRy_sCw |         2000 |  253 |
+| Sara      | -3s52C4zL_DHRK0ULG6qtg |         1629 |   50 |
+| Yuri      | -8lbUNlXVSoXqaRRiHiSNg |         1339 |   76 |
+| .Hon      | -K2Tcgh2EKX6e6HqqIrBIQ |         1246 |  101 |
+| William   | -FZBTkAZEXoP7CYvRV2ZwQ |         1215 |  126 |
+| Harald    | --2vR0DIsmQ6WfcSzKWigw |         1153 |  311 |
+| eric      | -gokwePdbXjfS0iF7NsUGA |         1116 |   16 |
+| Roanna    | -DFCC64NXgqrxlO8aLU5rg |         1039 |  104 |
+| Mimi      | -8EnCioUmDygAbsYZmTeRQ |          968 |  497 |
+| Christine | -0IiMAZI2SsQ7VmyzJjokQ |          930 |  173
+
+
+code : 
+select
+name
+, id
+, review_count
+, fans
+from user
+order by review_count desc;
+
+	
+9. Are there more reviews with the word "love" or with the word "hate" in them?
+
+	Answer: There are more reviews with the word 'Love'(1780) rather than word 'hate' (232) in reviews.
++----------+
+| pos_word |
++----------+
+|     1780 |
+
++----------+
+| neg_word |
++----------+
+|      232 |
++----------+
+
+	SQL code used to arrive at answer:
+1)  select count(*) as neg_word
+    from review 
+    where text like ('%love%');
+
+
+2)   select count(*) as neg_word
+     from review 
+     where text like ('%hate%');
+    
+
+	
+	
+10. Find the top 10 users with the most fans:
+
+	SQL code used to arrive at answer:
+       select name , 
+       fans, 
+       from user
+       order by fans desc
+       limit 10;
+	
+	
+	Copy and Paste the Result Below:
++-----------+------+
+| name      | fans |
++-----------+------+
+| Amy       |  503 |
+| Mimi      |  497 |
+| Harald    |  311 |
+| Gerald    |  253 |
+| Christine |  173 |
+| Lisa      |  159 |
+| Cat       |  133 |
+| William   |  126 |
+| Fran      |  124 |
+| Lissa     |  120 |
++-----------+------+
+
+	
+		
+
+Part 2: Inferences and Analysis
+
+1. Pick one city and category of your choice and group the businesses in that city or category by their overall star rating. Compare the businesses with 2-3 stars to the businesses with 4-5 stars and answer the following questions. Include your code.
+
+  For this analysis purpose I have chosen city ='TORONTO' and category ='RESTAURANTS'.
+
+i. Do the two groups you chose to analyze have a different distribution of hours?
+
+after brief analysis we can easily intrepret there are certain restaurants which has highest of ratings functions on evening to midnight from 14:00 - 2:00
+for example - Cabin fever (4.5).
+other than that there is not any big difference in distribution of hours in both the groups for instance , the restaurant 'Sushi Osaka' which has the ratings of 4.5 functions on the same hours as '99 Cent Sushi' restaurant whereas it was rated as 2.0 stars, so they don't seem to have much of difference when comes to distribution of hours.
+
++---------+------------------+-------------+-------+-----------------------+
+| city    | name             | category    | stars | hours                 |
++---------+------------------+-------------+-------+-----------------------+
+| Toronto | 99 Cent Sushi    | Restaurants |   2.0 | Monday|11:00-23:00    |
+| Toronto | 99 Cent Sushi    | Restaurants |   2.0 | Tuesday|11:00-23:00   |
+| Toronto | 99 Cent Sushi    | Restaurants |   2.0 | Friday|11:00-23:00    |
+| Toronto | 99 Cent Sushi    | Restaurants |   2.0 | Wednesday|11:00-23:00 |
+| Toronto | 99 Cent Sushi    | Restaurants |   2.0 | Thursday|11:00-23:00  |
+| Toronto | 99 Cent Sushi    | Restaurants |   2.0 | Sunday|11:00-23:00    |
+| Toronto | 99 Cent Sushi    | Restaurants |   2.0 | Saturday|11:00-23:00  |
+| Toronto | Big Smoke Burger | Restaurants |   3.0 | Monday|10:30-21:00    |
+| Toronto | Big Smoke Burger | Restaurants |   3.0 | Tuesday|10:30-21:00   |
+| Toronto | Big Smoke Burger | Restaurants |   3.0 | Friday|10:30-21:00    |
+| Toronto | Big Smoke Burger | Restaurants |   3.0 | Wednesday|10:30-21:00 |
+| Toronto | Big Smoke Burger | Restaurants |   3.0 | Thursday|10:30-21:00  |
+| Toronto | Big Smoke Burger | Restaurants |   3.0 | Sunday|11:00-19:00    |
+| Toronto | Big Smoke Burger | Restaurants |   3.0 | Saturday|10:30-21:00  |
+| Toronto | Pizzaiolo        | Restaurants |   3.0 | Monday|9:00-23:00     |
+| Toronto | Pizzaiolo        | Restaurants |   3.0 | Tuesday|9:00-23:00    |
+| Toronto | Pizzaiolo        | Restaurants |   3.0 | Friday|9:00-4:00      |
+| Toronto | Pizzaiolo        | Restaurants |   3.0 | Wednesday|9:00-23:00  |
+| Toronto | Pizzaiolo        | Restaurants |   3.0 | Thursday|9:00-23:00   |
+| Toronto | Pizzaiolo        | Restaurants |   3.0 | Sunday|10:00-23:00    |
+| Toronto | Pizzaiolo        | Restaurants |   3.0 | Saturday|10:00-4:00   |
+
++---------+------------------+-------------+-------+-----------------------+
+| city    | name             | category    | stars | hours                 |
++---------+------------------+-------------+-------+-----------------------+
+| Toronto | Cabin Fever      | Restaurants |   4.5 | Monday|16:00-2:00     |
+| Toronto | Cabin Fever      | Restaurants |   4.5 | Tuesday|18:00-2:00    |
+| Toronto | Cabin Fever      | Restaurants |   4.5 | Friday|18:00-2:00     |
+| Toronto | Cabin Fever      | Restaurants |   4.5 | Wednesday|18:00-2:00  |
+| Toronto | Cabin Fever      | Restaurants |   4.5 | Thursday|18:00-2:00   |
+| Toronto | Cabin Fever      | Restaurants |   4.5 | Sunday|16:00-2:00     |
+| Toronto | Cabin Fever      | Restaurants |   4.5 | Saturday|16:00-2:00   |
+| Toronto | Sushi Osaka      | Restaurants |   4.5 | Monday|11:00-23:00    |
+| Toronto | Sushi Osaka      | Restaurants |   4.5 | Tuesday|11:00-23:00   |
+| Toronto | Sushi Osaka      | Restaurants |   4.5 | Friday|11:00-23:00    |
+| Toronto | Sushi Osaka      | Restaurants |   4.5 | Wednesday|11:00-23:00 |
+| Toronto | Sushi Osaka      | Restaurants |   4.5 | Thursday|11:00-23:00  |
+| Toronto | Sushi Osaka      | Restaurants |   4.5 | Sunday|14:00-23:00    |
+| Toronto | Sushi Osaka      | Restaurants |   4.5 | Saturday|11:00-23:00  |
+| Toronto | Edulis           | Restaurants |   4.0 | Sunday|12:00-16:00    |
+| Toronto | Edulis           | Restaurants |   4.0 | Friday|18:00-23:00    |
+| Toronto | Edulis           | Restaurants |   4.0 | Wednesday|18:00-23:00 |
+| Toronto | Edulis           | Restaurants |   4.0 | Thursday|18:00-23:00  |
+| Toronto | Edulis           | Restaurants |   4.0 | Saturday|18:00-23:00  |
+
+
+ii. Do the two groups you chose to analyze have a different number of reviews?
+        
+YES, as we interpret the results from the below table we can easily conclude that the 2 groups have different number of reviews. for example the group with 2-3 stars have total of only 86 reviews , whereas the restaurants from the group 4-5 have 206 reviews collectively.
+
+
++---------+--------------------+-------------+-------+--------------+
+| city    | name               | category    | stars | review_count |
++---------+--------------------+-------------+-------+--------------+
+| Toronto | Cabin Fever        | Restaurants |   4.5 |           26 |
+| Toronto | Sushi Osaka        | Restaurants |   4.5 |            8 |
+| Toronto | Mama Mia           | Restaurants |   4.0 |            8 |
+| Toronto | Naniwa-Taro        | Restaurants |   4.0 |           75 |
+| Toronto | Edulis             | Restaurants |   4.0 |           89 |
+| Toronto | Big Smoke Burger   | Restaurants |   3.0 |           47 |
+| Toronto | Pizzaiolo          | Restaurants |   3.0 |           34 |
+| Toronto | 99 Cent Sushi      | Restaurants |   2.0 |            5 |
+
+iii. Are you able to infer anything from the location data provided between these two groups? Explain.
+
+NO , since the location data ectracted from the query for the 2 groups remains ambigious and doesn't have any pattern to classify hence we can't able to infer anything from thetwo groups location data.
+
++---------+--------------------+-------------+-------+------------------------+----------+-----------+-------+--------------------------+
+| city    | name               | category    | stars | neighborhood           | latitude | longitude | state | address                  |
++---------+--------------------+-------------+-------+------------------------+----------+-----------+-------+--------------------------+
+| Toronto | Cabin Fever        | Restaurants |   4.5 | High Park              |  43.6553 |  -79.4567 | ON    | 1669 Bloor Street W      |
+| Toronto | Sushi Osaka        | Restaurants |   4.5 | Etobicoke              |  43.6452 |  -79.5324 | ON    | 5084 Dundas Street W     |
+| Toronto | Mama Mia           | Restaurants |   4.0 |                        |  43.6809 |  -79.4302 | ON    | 816 Saint Clair Avenue W |
+| Toronto | Naniwa-Taro        | Restaurants |   4.0 | Willowdale             |  43.7766 |  -79.4142 | ON    | 7 Byng Avenue            |
+| Toronto | Edulis             | Restaurants |   4.0 | Niagara                |  43.6419 |  -79.4066 | ON    | 169 Niagara Street       |
+| Toronto | The Kosher Gourmet | Restaurants |   3.5 |                        |  43.7175 |  -79.4291 | ON    | 3003 Bathurst Street     |
+| Toronto | Big Smoke Burger   | Restaurants |   3.0 | Downtown Core          |  43.6546 |  -79.3805 | ON    | 260 Yonge Street         |
+| Toronto | Pizzaiolo          | Restaurants |   3.0 | Entertainment District |  43.6479 |  -79.3901 | ON    | 270 Adelaide Street W    |
+| Toronto | 99 Cent Sushi      | Restaurants |   2.0 | Downtown Core          |  43.6614 |   -79.379 | ON    | 389 Church Street        |
+| Toronto | Royal Dumpling     | Restaurants |   1.5 | Willowdale             |  43.7752 |   -79.414 | ON    | 5 Northtown Way, Unit 7  |
++---------+--------------------+-------------+-------+------------------------+----------+-----------+-------+--------------------------+
+
+
+
+SQL code used for analysis:
+(i) select city,name,category,stars,hours
+from business join category on business.id= category.business_Id
+join hours on hours.business_Id=business.id
+where city='Toronto' and category='Restaurants' and stars in (2,3)
+order by stars ;
+
+select city,name,category,stars,hours
+from business join category on business.id= category.business_Id
+join hours on hours.business_Id=business.id
+where city='Toronto' and category='Restaurants' and stars in (4,5)
+order by stars ;
+
+(ii) select city,name,category,stars,review_count
+from business join category on business.id= category.business_Id
+where city='Toronto' and category='Restaurants' 
+order by stars desc ;
+
+(iii)select city,name,category,stars,neighborhood,latitude,longitude,state,address
+from business join category on business.id= category.business_Id
+where city='Toronto' and category='Restaurants'
+order by stars desc ;
+
+
+
+
+		
+		
+2. Group business based on the ones that are open and the ones that are closed. What differences can you find between the ones that are still open and the ones that are closed? List at least two differences and the SQL code you used to arrive at your answer.
+		
+i. Difference 1
+The ones which are close mostly falls under the category of different types of restaurants,bars,dance clubs,shopping,bakeries,hotels,travel agencies,spas,medical , health and entertainment centres.which is either a recreational or entertainment based or supplies and food based.
+
++-------------------------------------+------------------------------+-----------------+-------+-------+--------------+
+| name                                | category                     | city            | state | stars | review_count |
++-------------------------------------+------------------------------+-----------------+-------+-------+--------------+
+| Holiday Inn Express Oakwood Village | Hotels & Travel              | Oakwood Village | OH    |   1.5 |            9 |
+| Holiday Inn Express Oakwood Village | Venues & Event Spaces        | Oakwood Village | OH    |   1.5 |            9 |
+| Holiday Inn Express Oakwood Village | Hotels                       | Oakwood Village | OH    |   1.5 |            9 |
+| Holiday Inn Express Oakwood Village | Event Planning & Services    | Oakwood Village | OH    |   1.5 |            9 |
+| Fiesta Ranchera                     | Restaurants                  | Champaign       | IL    |   2.0 |            4 |
+| Fiesta Ranchera                     | Mexican                      | Champaign       | IL    |   2.0 |            4 |
+| Mood                                | Dance Clubs                  | Edinburgh       | EDH   |   2.0 |           11 |
+| Mood                                | Nightlife                    | Edinburgh       | EDH   |   2.0 |           11 |
+| 99 Cent Sushi                       | Sushi Bars                   | Toronto         | ON    |   2.0 |            5 |
+| 99 Cent Sushi                       | Japanese                     | Toronto         | ON    |   2.0 |            5 |
+| 99 Cent Sushi                       | Restaurants                  | Toronto         | ON    |   2.0 |            5 |
+| Iron City Grille                    | American (Traditional)       | Coraopolis      | PA    |   2.0 |            3 |
+| Iron City Grille                    | Restaurants                  | Coraopolis      | PA    |   2.0 |            3 |
+| Iron City Grille                    | Bars                         | Coraopolis      | PA    |   2.0 |            3 |
+| Iron City Grille                    | Nightlife                    | Coraopolis      | PA    |   2.0 |            3 |
+| Humber River Regional Hospital      | Hospitals                    | Toronto         | ON    |   2.0 |            5 |
+| Humber River Regional Hospital      | Medical Centers              | Toronto         | ON    |   2.0 |            5 |
+| Humber River Regional Hospital      | Health & Medical             | Toronto         | ON    |   2.0 |            5 |
+| Humber River Regional Hospital      | Public Services & Government | Toronto         | ON    |   2.0 |            5 |
+| Ghost Armor SS Springs              | Mobile Phones                | Mesa            | AZ    |   2.0 |            3 |
+| Ghost Armor SS Springs              | Local Services               | Mesa            | AZ    |   2.0 |            3 |
+| Ghost Armor SS Springs              | Shopping                     | Mesa            | AZ    |   2.0 |            3 |
+| Ghost Armor SS Springs              | Mobile Phone Accessories     | Mesa            | AZ    |   2.0 |            3 |
+| Famous Sam's                        | American (New)               | Glendale        | AZ    |   2.5 |            3 |
+| Famous Sam's                        | Restaurants                  | Glendale        | AZ    |   2.5 |            3 |
++-------------------------------------+------------------------------+-----------------+-------+-------+--------------+
+
+The one which are still open still comprises of hotels ,stores and entertainment centres along with Automotive, electronics,financial services,vehicle dealers ,schools ,vehicle rental, banks ,mobile phones,transportation services,oil change stations,plumbing,HVAC and solar Installation.
+so most of the category from this group is either relies on the product services rather than entertainment services , food and groceries likewise in previous above group ,so these industries are still open and functioning.
++-------------------------------+---------------------------------+------------+-------+-------+--------------+
+| name                          | category                        | city       | state | stars | review_count |
++-------------------------------+---------------------------------+------------+-------+-------+--------------+
+| Motors & More                 | Home Services                   | Las Vegas  | NV    |   5.0 |            7 |
+| Motors & More                 | Solar Installation              | Las Vegas  | NV    |   5.0 |            7 |
+| Motors & More                 | Heating & Air Conditioning/HVAC | Las Vegas  | NV    |   5.0 |            7 |
+| Frankie Fettuccine Food Truck | Event Planning & Services       | Oakville   | ON    |   5.0 |            7 |
+| Frankie Fettuccine Food Truck | Caterers                        | Oakville   | ON    |   5.0 |            7 |
+| Frankie Fettuccine Food Truck | Food Trucks                     | Oakville   | ON    |   5.0 |            7 |
+| Frankie Fettuccine Food Truck | Food                            | Oakville   | ON    |   5.0 |            7 |
+| Halo Plumbing                 | Home Services                   | Henderson  | NV    |   5.0 |            5 |
+| Halo Plumbing                 | Plumbing                        | Henderson  | NV    |   5.0 |            5 |
+| Middleton Art and Framing     | Art Galleries                   | Middleton  | WI    |   5.0 |            8 |
+| Middleton Art and Framing     | Shopping                        | Middleton  | WI    |   5.0 |            8 |
+| Middleton Art and Framing     | Arts & Entertainment            | Middleton  | WI    |   5.0 |            8 |
+| Middleton Art and Framing     | Arts & Crafts                   | Middleton  | WI    |   5.0 |            8 |
+| Middleton Art and Framing     | Framing                         | Middleton  | WI    |   5.0 |            8 |
+| Christian Brothers Automotive | Automotive                      | Chandler   | AZ    |   5.0 |           63 |
+| Christian Brothers Automotive | Auto Repair                     | Chandler   | AZ    |   5.0 |           63 |
+| Christian Brothers Automotive | Oil Change Stations             | Chandler   | AZ    |   5.0 |           63 |
+| Christian Brothers Automotive | Transmission Repair             | Chandler   | AZ    |   5.0 |           63 |
+| Buddy's Muffler & Exhaust     | Automotive                      | Gastonia   | NC    |   5.0 |            4 |
+| Buddy's Muffler & Exhaust     | Auto Repair                     | Gastonia   | NC    |   5.0 |            4 |
+| Innercity MMA                 | Fitness & Instruction           | Toronto    | ON    |   5.0 |            3 |
+| Innercity MMA                 | Martial Arts                    | Toronto    | ON    |   5.0 |            3 |
+| Innercity MMA                 | Active Life                     | Toronto    | ON    |   5.0 |            3 |
+| PRO BIKE+RUN                  | Bike Repair/Maintenance         | Pittsburgh | PA    |   5.0 |            8 |
+| PRO BIKE+RUN                  | Local Services                  | Pittsburgh | PA    |   5.0 |            8 |
++-------------------------------+---------------------------------+------------+-------+-------+--------------+
+
+         
+ii. Difference 2:
+         
++-------------+---------+
+| tot_reviews | is_open |
++-------------+---------+
+|       35261 |       0 |
+|      269300 |       1 |
++-------------+---------+
+The business that are still open have higher number of reviews collectively when compared to the business which are closed.
+From the above table, we can conclude that there is a difference due to the number of reviews for the restaurant that are still open to ones that are closed.
+         
+         
+SQL code used for analysis:
+
+(i)
+select name ,category,city,state,stars,review_count
+from category join business on business.id = category.business_id
+where is_open=1
+order by review_count desc ;
+
+select name ,category,city,state,stars,review_count
+from category join business on business.id = category.business_id
+where is_open=0
+order by review_count desc ;
+
+
+(ii)
+select sum(review_count) as tot_reviews,is_open
+from business
+group by is_open
+
+select name ,category,city,state,stars
+from category join business on business.id = category.business_id
+where is_open=1
+
+	
+	
+3. For this last part of your analysis, you are going to choose the type of analysis you want to conduct on the Yelp dataset and are going to prepare the data for analysis.
+
+Ideas for analysis include: Parsing out keywords and business attributes for sentiment analysis, clustering businesses to find commonalities or anomalies between them, predicting the overall star rating for a business, predicting the number of fans a user will have, and so on. These are just a few examples to get you started, so feel free to be creative and come up with your own problem you want to solve. Provide answers, in-line, to all of the following:
+	
+i. Indicate the type of analysis you chose to do:
+         predicting the overall star rating for a business
+         
+ii. Write 1-2 brief paragraphs on the type of data you will need for your analysis and why you chose that data:
+
+The data required for this analysis is extracted from business table and the required attributes are stars and name of respective businesses, for this prediction we have deployed a sum function over stars and grouped them based on the name of businesses. from our prediction starbucks tops the table with the cumulative sum of 166.5 stars overall followed by Subway (137.5) and McDonald's (89.5)
+                           
+                  
+iii. Output of your finished data
++--------------+------------------------+
+| overall_star | name                   |
++--------------+------------------------+
+|        166.5 | Starbucks              |
+|        137.5 | Subway                 |
+|         89.5 | McDonald's             |
+|         85.5 | Taco Bell              |
+|         59.5 | Tim Hortons            |
+|         57.0 | Chipotle Mexican Grill |
+|         47.0 | Walgreens              |
+|         42.0 | Enterprise Rent-A-Car  |
+|         41.5 | Dairy Queen            |
+|         40.0 | Wells Fargo Bank       |
+|         38.5 | Jimmy John's           |
+|         38.5 | The UPS Store          |
+|         37.0 | Dunkin' Donuts         |
+|         32.5 | Pizza Hut              |
+|         31.5 | Great Clips            |
+|         31.5 | KFC                    |
+|         31.5 | Panera Bread           |
+|         29.5 | Burger King            |
+|         27.0 | Anytime Fitness        |
+|         26.5 | 7-Eleven               |
+|         26.0 | Panda Express          |
+|         25.5 | AT&T                   |
+|         24.0 | Denny's                |
+|         24.0 | Papa Murphy's          |
+|         23.5 | Bank of America        |
++--------------+------------------------+
+iv. Provide the SQL code you used to create your final dataset:
+
+
+select sum(stars)as overall_star,name
+from business
+group by name
+order by overall_star desc ;
